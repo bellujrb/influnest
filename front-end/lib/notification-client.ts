@@ -1,11 +1,17 @@
-import {
-  FrameNotificationDetails,
-  type SendNotificationRequest,
-  sendNotificationResponseSchema,
-} from "@farcaster/frame-sdk";
-import { getUserNotificationDetails } from "@/lib/notification";
-
 const appUrl = process.env.NEXT_PUBLIC_URL || "";
+
+type NotificationDetails = {
+  url: string;
+  token: string;
+};
+
+type SendNotificationRequest = {
+  notificationId: string;
+  title: string;
+  body: string;
+  targetUrl: string;
+  tokens: string[];
+};
 
 type SendFrameNotificationResult =
   | {
@@ -17,51 +23,47 @@ type SendFrameNotificationResult =
   | { state: "success" };
 
 export async function sendFrameNotification({
-  fid,
   title,
   body,
   notificationDetails,
 }: {
-  fid: number;
   title: string;
   body: string;
-  notificationDetails?: FrameNotificationDetails | null;
+  notificationDetails?: NotificationDetails | null;
 }): Promise<SendFrameNotificationResult> {
-  if (!notificationDetails) {
-    notificationDetails = await getUserNotificationDetails(fid);
-  }
+  // Se não há detalhes de notificação, retorna sem token
   if (!notificationDetails) {
     return { state: "no_token" };
   }
 
-  const response = await fetch(notificationDetails.url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      notificationId: crypto.randomUUID(),
-      title,
-      body,
-      targetUrl: appUrl,
-      tokens: [notificationDetails.token],
-    } satisfies SendNotificationRequest),
-  });
+  try {
+    const response = await fetch(notificationDetails.url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        notificationId: crypto.randomUUID(),
+        title,
+        body,
+        targetUrl: appUrl,
+        tokens: [notificationDetails.token],
+      } satisfies SendNotificationRequest),
+    });
 
-  const responseJson = await response.json();
+    const responseJson = await response.json();
 
-  if (response.status === 200) {
-    const responseBody = sendNotificationResponseSchema.safeParse(responseJson);
-    if (responseBody.success === false) {
-      return { state: "error", error: responseBody.error.errors };
+    if (response.status === 200) {
+      // Verifica se há tokens com rate limit
+      if (responseJson.result?.rateLimitedTokens?.length) {
+        return { state: "rate_limit" };
+      }
+
+      return { state: "success" };
     }
 
-    if (responseBody.data.result.rateLimitedTokens.length) {
-      return { state: "rate_limit" };
-    }
-
-    return { state: "success" };
+    return { state: "error", error: responseJson };
+  } catch (error) {
+    return { state: "error", error };
   }
-
-  return { state: "error", error: responseJson };
 }

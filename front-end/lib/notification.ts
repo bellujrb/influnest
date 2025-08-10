@@ -1,5 +1,9 @@
-import type { FrameNotificationDetails } from "@farcaster/frame-sdk";
 import { redis } from "./redis";
+
+  type FrameNotificationDetails = {
+  url: string;
+  token: string;
+};
 
 const notificationServiceKey =
   process.env.NEXT_PUBLIC_ONCHAINKIT_PROJECT_NAME ?? "minikit";

@@ -205,7 +205,7 @@ export function ReviewCampaign({ campaignId }: ReviewCampaignProps) {
           {!isConnected ? (
             <div className="w-full">
               <ConnectButton.Custom>
-                {({ account, chain, openConnectModal, mounted }) => {
+                {({ openConnectModal }) => {
                   return (
                     <Button 
                       onClick={openConnectModal}
