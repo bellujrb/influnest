@@ -1,16 +1,9 @@
 #!/bin/bash
 
-if [ -f .env ]; then
-    export $(cat .env | grep -v '^#' | xargs)
-else
-    echo ".env file not found!"
-    exit 1
-fi
-
-if [ -z "$MORPH_PRIVATE_KEY" ] || [ -z "$MORPH_RPC_URL" ] || [ -z "$CHAIN_ID" ]; then
-    echo "Error: Environment variables not defined. Please check the .env file"
-    exit 1
-fi
+# Configurações hardcode para Morph Holesky Testnet
+MORPH_PRIVATE_KEY=a4a3d3d4f1f7b1358d903f3608edb0c28d107ea4a8ebadd314d039150d69a23e
+MORPH_RPC_URL=https://rpc-quicknode-holesky.morphl2.io
+CHAIN_ID=2810
 
 echo "Deploying to Morph Holesky Testnet..."
 echo "RPC URL: $MORPH_RPC_URL"

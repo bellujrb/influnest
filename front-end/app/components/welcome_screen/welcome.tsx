@@ -14,7 +14,7 @@ export function Home({ setActiveTab }: FeaturesProps) {
         {/* Built on Base Badge */}
         <div className="inline-flex items-center space-x-2 bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-medium">
           <Icon name="lightning" size="sm" className="text-blue-600" />
-          <span>Built on Base</span>
+          <span>Built on Morph Holesky Testnet</span>
         </div>
 
         {/* Main Headline */}

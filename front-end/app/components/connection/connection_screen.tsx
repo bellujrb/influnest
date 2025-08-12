@@ -56,7 +56,9 @@ export function ConnectionScreen({ setActiveTab }: ConnectionScreenProps) {
               </div>
             </>
           ) : (
-              <ConnectButton />
+              <div className="flex justify-center w-max">
+                <ConnectButton />
+              </div>
           )}
         </div>
 

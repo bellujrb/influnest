@@ -7,12 +7,7 @@
   --foreground: #111111;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #111111;
-    --foreground: #ffffff;
-  }
-}
+/* Removido o @media (prefers-color-scheme: dark) para sempre usar light mode */
 
 body {
   color: var(--foreground);
